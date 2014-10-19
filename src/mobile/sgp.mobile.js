@@ -5,34 +5,6 @@ var $ = require('jquery');
 var sgp = require('supergenpass-lib');
 var md5 = require('crypto-js/md5');
 var sha512 = require('crypto-js/sha512');
-var zeroclipboard = require('zeroclipboard');
-var flashversion = require('./lib/flashversion');
-var identicon = require('./lib/identicon5');
-var shortcut = require('./lib/shortcut');
-var storage = require('./lib/localstorage-polyfill');
-
-// Set default values.
-var messageOrigin = false;
-var messageSource = false;
-var language = location.search.substring(1);
-var latestBookmarklet = '../bookmarklet/bookmarklet.min.js';
-var latestVersion = 20140728;
-var alternateDomain = '';
-
-// ZeroClipboard configuration.
-var zeroClipboardConfig = {
-  bubbleEvents: false,
-  hoverClass: 'Hover',
-  activeClass: 'Active'
-};
-
-// Major search engine referral hostnames.
-var searchEngines = [
-  'www.google.com',
-  'www.bing.com',
-  'duckduckgo.com',
-  'r.search.yahoo.com'
-];
 
 // Localizations.
 var localizations = {
@@ -46,42 +18,12 @@ var localizations = {
   'ru':    ['Мастер-пароль', 'Домена / URL', 'Подтвердить']
 };
 
-// Enumerate jQuery selectors for caching.
-var $el = {};
-var selectors =
-  [
-    'PasswdField',
-    'Passwd',
-    'PasswdLabel',
-    'Secret',
-    'DomainField',
-    'Domain',
-    'DomainLabel',
-    'DisableTLD',
-    'Len',
-    'Generate',
-    'Mask',
-    'MaskText',
-    'CopyButton',
-    'Output',
-    'Canvas',
-    'Options',
-    'Update',
-    'Bookmarklet'
-  ];
-
 // Retrieve user's configuration from local storage, if available.
 var config = {
   passwordLength: storage.local.getItem('Len') || 10,
   masterSecret:   storage.local.getItem('Salt') || '',
   hashMethod:     storage.local.getItem('Method') || 'md5',
   disableTLD:     storage.local.getItem('DisableTLD') || ''
-};
-
-var showUpdateNotification = function (data) {
-  $el.Bookmarklet.attr('href', data);
-  $el.Update.show();
-  sendDocumentHeight();
 };
 
 // Populate domain with referrer, if available and not from a search engine.
