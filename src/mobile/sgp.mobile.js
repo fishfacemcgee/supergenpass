@@ -36,63 +36,6 @@ var populateReferrer = function (referrer) {
   }
 };
 
-// Listen for postMessage from bookmarklet.
-var listenForBookmarklet = function (event) {
-
-  var post = event.originalEvent;
-
-  if (post.origin !== window.location.origin) {
-
-    // Save message source.
-    messageSource = post.source;
-    messageOrigin = post.origin;
-
-    // Parse message.
-    $.each(JSON.parse(post.data), function (key, value) {
-      switch (key) {
-      case 'version':
-        if(value < latestVersion) {
-          // Fetch latest bookmarklet.
-          $.ajax({
-            url: latestBookmarklet,
-            success: showUpdateNotification,
-            dataType: 'html'
-          });
-        }
-        break;
-      }
-    });
-
-    // Populate domain field and call back with the browser height.
-    $el.Domain.val(sgp.hostname(messageOrigin, {removeSubdomains: !config.disableTLD})).trigger('change');
-    sendDocumentHeight();
-
-  }
-
-};
-
-// Send document height to bookmarklet.
-var sendDocumentHeight = function () {
-  postMessageToBookmarklet({
-    height: $(document.body).height()
-  });
-};
-
-// Send generated password to bookmarklet.
-var sendGeneratedPassword = function (generatedPassword) {
-  postMessageToBookmarklet({
-    result: generatedPassword
-  });
-};
-
-// Send message using HTML5 postMessage API. Only post a message if we are in
-// communication with the bookmarklet.
-var postMessageToBookmarklet = function (message) {
-  if(messageSource && messageOrigin) {
-    messageSource.postMessage(JSON.stringify(message), messageOrigin);
-  }
-};
-
 // Save configuration to local storage.
 var saveConfiguration = function (masterSecret, passwordLength, hashMethod, disableTLD) {
   storage.local.setItem('Salt', masterSecret);
